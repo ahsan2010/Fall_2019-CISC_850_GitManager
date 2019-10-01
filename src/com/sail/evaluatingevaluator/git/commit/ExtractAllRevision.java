@@ -172,7 +172,7 @@ public class ExtractAllRevision {
 		pb.directory(new File(REPOSITORY_PATH));
 		Process process = pb.start();		
 		String output = ProcessUtility.output(process.getErrorStream());
-		ProcessUtility.output(process.getErrorStream());
+		ProcessUtility.output(process.getInputStream());
 		//System.out.println(output);
 		int errCode = process.waitFor();
 		if(errCode!=0) {
@@ -184,27 +184,27 @@ public class ExtractAllRevision {
 		ProcessBuilder pbMake = new ProcessBuilder("mkdir",outputFolderName);
 		Process processMake = pbMake.start();
 		ProcessUtility.output(processMake.getErrorStream());
-		ProcessUtility.output(processMake.getErrorStream());
+		ProcessUtility.output(processMake.getInputStream());
 		processMake.waitFor();
 		
 		ProcessBuilder pbExtract = new ProcessBuilder("tar", "-xvzf",archiveFilePath,"-C",outputFolderName);
 		Process processExtract= pbExtract.start();
 		String outputStream = ProcessUtility.output(processExtract.getErrorStream());
-		ProcessUtility.output(processExtract.getErrorStream());
+		ProcessUtility.output(processExtract.getInputStream());
 		processExtract.waitFor();
 		
 		//find . -type f ! -name '*.txt' -delete
 		ProcessBuilder pbFilterJava = new ProcessBuilder("find", outputFolderName,"-type","f","!","-name","*.java","-delete");
 		Process processFilterJava= pbFilterJava.start();
 		String errorJavaFilter = ProcessUtility.output(processFilterJava.getErrorStream());
-		ProcessUtility.output(processFilterJava.getErrorStream());
+		ProcessUtility.output(processFilterJava.getInputStream());
 		processFilterJava.waitFor();
 		
 		
 		ProcessBuilder pbRemove = new ProcessBuilder("rm", "-f", archiveFilePath);
 		Process processRemove = pbRemove.start();
 		ProcessUtility.output(processRemove.getErrorStream());
-		ProcessUtility.output(processRemove.getErrorStream());
+		ProcessUtility.output(processRemove.getInputStream());
 		processRemove.waitFor();
 		
 		///Users/mdahasanuzzaman/Documents/Queens_Phd/Fall_2019_Courses/CISC-850/Assignments/hive/ql/src/java/org/apache/hadoop/hive/ql/exec/FileSinkOperator.java
@@ -229,7 +229,7 @@ public class ExtractAllRevision {
 					ProcessBuilder pbRemoveFile = new ProcessBuilder("rm", "-f", filePath);
 					Process processRemoveFile = pbRemoveFile.start();
 					ProcessUtility.output(processRemoveFile.getErrorStream());
-					ProcessUtility.output(processRemoveFile.getErrorStream());
+					ProcessUtility.output(processRemoveFile.getInputStream());
 					processRemoveFile.waitFor();
 					//System.out.println(directoryFilePath);
 				}
@@ -266,7 +266,7 @@ public class ExtractAllRevision {
 		RevisionFileChangeDescriptor firstRevisionFileChangeDescriptor = new RevisionFileChangeDescriptor(fileChangePairList,oldCommitSHA,newCommitSHA);
 		
 		commitMessageInformationExtraction(null, 0, commitList, false);
-		for(int commitIndex = 1000 ; commitIndex < 2000; commitIndex++) {
+		for(int commitIndex = 4000 ; commitIndex < 5000; commitIndex++) {
 			
 			Commit previousCommit 		= commitList.get(commitIndex-1);
 			Commit currentCommit 		= commitList.get(commitIndex);
