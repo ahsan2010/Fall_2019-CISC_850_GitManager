@@ -60,5 +60,6 @@
 	<classpathentry kind="lib" path="lib/commons-compress-1.18.jar"/>
 	<classpathentry kind="lib" path="lib/jarchivelib-0.7.1.jar"/>
 	<classpathentry kind="lib" path="lib/joda-time-2.1.jar"/>
+	<classpathentry kind="lib" path="lib/javax.json.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

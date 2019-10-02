@@ -32,7 +32,7 @@ import com.sail.evaluatingevaluator.process.ProcessUtility;
 public class CommitManager implements Serializable {
 
 	private static String REPOSITORY_PATH = "/Users/mdahasanuzzaman/Documents/Queens_Phd/Fall_2019_Courses/CISC-850/Assignments/hive/";
-	private String COMMIT_MESSAGE_FILE = "/Users/mdahasanuzzaman/Documents/Queens_Phd/Fall_2019_Courses/CISC-850/Assignments/Result/commit_message.csv";
+	private String COMMIT_MESSAGE_FILE = "/Users/mdahasanuzzaman/Documents/Queens_Phd/Fall_2019_Courses/CISC-850/Assignments/Result/commit_message_Full.csv";
 	private List<Commit> commitListNewestFirst;
 	private String repositoryPath;
 	private HashMap<String, Commit> hmSHAtoCommit;
@@ -96,7 +96,7 @@ public class CommitManager implements Serializable {
 	private void parse(String output) throws IOException {
 		String commitSHA = null;
 		String message = null;
-		ArrayList<String> messageLines = new ArrayList();
+		
 
 		// step-1:convert the output into list of lines
 		List<String> lineList = IOUtils.readLines(new StringReader(output));
@@ -106,6 +106,7 @@ public class CommitManager implements Serializable {
 			String line = lineList.get(i);
 
 			if (line.startsWith("commit ")) {
+				ArrayList<String> messageLines = new ArrayList();
 				String split[] = line.split("\\s+");
 				commitSHA = split[1];
 				i++;
@@ -140,6 +141,7 @@ public class CommitManager implements Serializable {
 					}
 				}
 				Commit commit = new Commit(author.get(), date.get().substring(1), this.listToString(messageLines), commitSHA);
+				//if(totalCommit <= 500)
 				writeCommitMessageInfo(commit);
 				System.out.println("Commit " + (++totalCommit) + " " + commit.getDate());
 				// this.add(commit);
