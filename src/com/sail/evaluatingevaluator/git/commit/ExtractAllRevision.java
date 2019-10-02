@@ -25,6 +25,8 @@ import com.sail.evaluatingevaluator.process.ProcessUtility;
 public class ExtractAllRevision {
 
 	
+	// First Commit ID 65da10218eaac25c47a69f6965002a1ac4bfcac3
+	
 	private String ROOT  = "/Users/mdahasanuzzaman/Documents/Queens_Phd/Fall_2019_Courses/CISC-850/Assignments/";
 	//private String ROOT  = "/home/local/SAIL/ahsan/Documents/Fall_2019/CISC-850/Assignment/";
 	private String TAR_TEMP_FILE = ROOT + "TarTemp/";

@@ -18,7 +18,7 @@ import com.sail.evaluatingevaluator.process.ProcessUtility;
 public class RevisionFileListCollector {
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
+		/*// TODO Auto-generated method stub
 		try {
 			ArrayList<String> fileList = RevisionFileListCollector.getFileList("42cd79f0163a0de87c0dc02424b2d019c50e7759",Config.REPOSITORY_PATH);
 			fileList.stream().forEach((String s)->{
@@ -28,7 +28,7 @@ public class RevisionFileListCollector {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}
+*/	}
 	//repository path points to the cloned repository
 	public static ArrayList<String> getFileList(String SHA, String repositoryPath) throws IOException, InterruptedException {
 		ProcessBuilder pb = new ProcessBuilder("git","ls-tree","-r","--name-only",SHA);
