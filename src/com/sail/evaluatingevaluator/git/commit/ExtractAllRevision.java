@@ -27,7 +27,7 @@ public class ExtractAllRevision {
 	
 	// First Commit ID 65da10218eaac25c47a69f6965002a1ac4bfcac3
 	
-	private String ROOT  = "/Users/mdahasanuzzaman/Documents/Queens_Phd/Fall_2019_Courses/CISC-850/Assignments/";
+	private String ROOT  = "/home/ahsan/Documents/Queens_PHD/Courses/Fall_2019/CISC_850/Assignment/Assignment/";
 	//private String ROOT  = "/home/local/SAIL/ahsan/Documents/Fall_2019/CISC-850/Assignment/";
 	private String TAR_TEMP_FILE = ROOT + "TarTemp/";
 	private String COMMIT_MESSAGE_FILE = ROOT+"/Result/commit_id_date.csv";
@@ -44,8 +44,8 @@ public class ExtractAllRevision {
 			writerChangeInfo = new CsvWriter(FILE_CHANGE_FILE);
 			writerChangeInfo.write("Commit_Id");
 			writerChangeInfo.write("Commit_Date");
-			writerChangeInfo.write("Changed_File");
 			writerChangeInfo.write("Change_Type");
+			writerChangeInfo.write("Changed_File");
 			writerChangeInfo.endRecord();
 		}catch(Exception e) {
 			e.printStackTrace();
@@ -75,6 +75,7 @@ public class ExtractAllRevision {
 			}
 		});
 	}
+	
 	public String listToString(String words[]) {
 		String result = "";
 		for(String word : words) {
@@ -92,8 +93,7 @@ public class ExtractAllRevision {
 		for(String line:lineList) {
 			//System.out.println(line);
 			if(line.length()>0 && line.matches("\\s+")==false){
-				String split[] = line.split("\\s+");
-				
+				String split[] = line.split("\\s+");				
 				if(split[0].equals("A") && split[1].trim().endsWith(".java")) {
 					FileChangePair fileChangePair = new FileChangePair(FileChangeType.ADDED);
 					fileChangePair.setNewFile(split[1]);
@@ -266,9 +266,8 @@ public class ExtractAllRevision {
 		String newCommitSHA = commitList.get(0).getSha();
 		String oldCommitSHA = null;
 		RevisionFileChangeDescriptor firstRevisionFileChangeDescriptor = new RevisionFileChangeDescriptor(fileChangePairList,oldCommitSHA,newCommitSHA);
-		
-		commitMessageInformationExtraction(null, 0, commitList, false);
-		for(int commitIndex = 4000 ; commitIndex < 5000; commitIndex++) {
+		//commitMessageInformationExtraction(null, 0, commitList, false);
+		for(int commitIndex = 1 ; commitIndex < commitList.size(); commitIndex++) {
 			
 			Commit previousCommit 		= commitList.get(commitIndex-1);
 			Commit currentCommit 		= commitList.get(commitIndex);
@@ -282,12 +281,12 @@ public class ExtractAllRevision {
 			Process process = pb.start();
 			String output = ProcessUtility.output(process.getInputStream());
 			int errCode = process.waitFor();
-			
 			RevisionFileChangeDescriptor revisionFileChangeDescriptor = this.parse(output, commitIndex, commitList);			
-			System.out.println("Finish Commit = " + (commitIndex + 1));
+			
+			System.out.println((commitIndex) + "," + currentCommitSHA +"," + commitList.get(commitIndex).getDate() +"," + revisionFileChangeDescriptor.getFilesChangePairList().size());
 			//revisionFileChangeDescriptor.print();
 			writeCommitFileChangeInfo(revisionFileChangeDescriptor,currentCommit);
-			commitMessageInformationExtraction(revisionFileChangeDescriptor, commitIndex, commitList, true);
+			//commitMessageInformationExtraction(revisionFileChangeDescriptor, commitIndex, commitList, true);
 		}
 		writerChangeInfo.close();
 		

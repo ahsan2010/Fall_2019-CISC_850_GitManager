@@ -10,7 +10,7 @@ public class Config {
 	//subject systems: antlr4, commons-lang,jEdit, jgit, log4j, pdfbox, storm
 	public static  String ROOT_PATH = "/home/local/SAIL/parvezku01/research/CodeCompletionEvaluation/repositories";
 	public static  String REPOSITORY_NAME = "commons-lang"; 
-	public static  String REPOSITORY_PATH = ROOT_PATH + File.separator + REPOSITORY_NAME;
+	public static  String REPOSITORY_PATH = "/home/ahsan/Documents/Queens_PHD/Courses/Fall_2019/CISC_850/Assignment/Assignment/hive/";
 	public static  String REPOSITORY_REVISION_PATH = ROOT_PATH + File.separator + REPOSITORY_NAME + "_revisions";
 	public static  String REPOSITORY_DATA_PATH = ROOT_PATH + File.separator + REPOSITORY_NAME+"_data";
 	public static  String REPOSITORY_OUTPUT_PATH = REPOSITORY_DATA_PATH+File.separator+"output";

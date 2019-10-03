@@ -47,7 +47,7 @@ public class ElementVisitor extends DefaultHandler {
 	
 	public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException {
 		if (qName.equals("comment")) {
-			System.out.println("Comment Got " + atts.getValue("type"));
+			//System.out.println("Comment Got " + atts.getValue("type"));
 			if(!insideFunction) {
 				sbComment = new StringBuffer();
 			}

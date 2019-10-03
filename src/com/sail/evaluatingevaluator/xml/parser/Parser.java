@@ -44,7 +44,7 @@ public class Parser {
 		           } catch (SAXException e) {
 		            e.printStackTrace();
 		        }   
-		    for(String key : methodListClass.keySet()) {
+		    /*for(String key : methodListClass.keySet()) {
 		    	System.out.println(key);
 		    	MethodCommentModel mm = methodListClass.get(key);
 		    	System.out.println(mm.getMethodSignature());
@@ -52,7 +52,7 @@ public class Parser {
 				System.out.println("InnerComment: " + mm.getInnerComment());
 				System.out.println("Body: " + mm.getMethodBody());
 				System.out.println("----------------------");
-		    }
+		    }*/
 	}
 	
 	public static void main(String[] args) throws Exception{

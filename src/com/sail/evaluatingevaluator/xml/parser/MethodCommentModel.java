@@ -2,12 +2,12 @@ package com.sail.evaluatingevaluator.xml.parser;
 
 public class MethodCommentModel {
 
-	public String methodSignature;
-	public String methodName;
-	public String methodParameter;
-	public String methodBody;
-	public String innerComment;
-	public String outerComment;
+	public String methodSignature = "";
+	public String methodName = "";
+	public String methodParameter = "";
+	public String methodBody = "";
+	public String innerComment = "";
+	public String outerComment = "";
 	public String getMethodSignature() {
 		return methodSignature;
 	}
