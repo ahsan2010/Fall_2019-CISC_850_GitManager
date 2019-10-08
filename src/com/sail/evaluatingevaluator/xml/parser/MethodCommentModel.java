@@ -8,6 +8,26 @@ public class MethodCommentModel {
 	public String methodBody = "";
 	public String innerComment = "";
 	public String outerComment = "";
+	
+	
+	String fucntionString = "";
+	String commentString = "";
+	
+	
+	
+	
+	public String getFucntionString() {
+		return fucntionString;
+	}
+	public void setFucntionString(String fucntionString) {
+		this.fucntionString = fucntionString;
+	}
+	public String getCommentString() {
+		return commentString;
+	}
+	public void setCommentString(String commentString) {
+		this.commentString = commentString;
+	}
 	public String getMethodSignature() {
 		return methodSignature;
 	}

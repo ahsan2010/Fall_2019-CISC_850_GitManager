@@ -37,7 +37,7 @@ public class ElementVisitor extends DefaultHandler {
 	StringBuffer sbFunctionName = null;
 	StringBuffer sbFunctionBody = null;
 	
-	String [] classNameList = new String [20];
+	String [] classNameList = new String [2000];
 	int totalClass = -1;
 	
 	boolean typeJustClosed = false;
@@ -99,7 +99,13 @@ public class ElementVisitor extends DefaultHandler {
 			commentJustEnd = true;
 		}
 		if(qName.equals("function")){
-			String methodSignature = classNameList[totalClass] +"."+ sbFunctionName+"-"+sbParameter;
+			String methodSignature = sbFunctionName+"-"+sbParameter;
+			if(totalClass >=0){
+				 methodSignature = classNameList[totalClass] +"."+ sbFunctionName+"-"+sbParameter;
+			}
+			else {
+				 methodSignature = sbFunctionName+"-"+sbParameter;
+			}
 			mm.setMethodSignature(methodSignature);
 			mm.setMethodBody(sbFunctionBody.toString());
 			mm.setInnerComment(sbInnerComment.toString());

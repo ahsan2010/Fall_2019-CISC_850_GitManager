@@ -180,7 +180,6 @@ public class ExtractAllRevision {
 		if(errCode!=0) {
 			System.out.println();
 		}
-	
 		String outputFolderName = REVISION_FILE + commit.getSha() + "_" + commit.getDate();
 		
 		ProcessBuilder pbMake = new ProcessBuilder("mkdir",outputFolderName);

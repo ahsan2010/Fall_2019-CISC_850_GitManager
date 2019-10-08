@@ -27,7 +27,7 @@ public class CollectMetrics {
 	String COMMIT_INFO_PATH = "/home/ahsan/Documents/Queens_PHD/Courses/Fall_2019/CISC_850/Assignment/Assignment/Result/revision_change_Lookup.csv";
 	String COMMIT_BUG_INFO = "/home/ahsan/Documents/Queens_PHD/Courses/Fall_2019/CISC_850/Assignment/Assignment/Result/commit_bug_info.csv";
 	
-	String OUTPUT_CHANGE_BUG_COMMIIT_INFO = "/home/ahsan/Documents/Queens_PHD/Courses/Fall_2019/CISC_850/Assignment/Assignment/Result/output_change_metric_per_component.csv";
+	String OUTPUT_CHANGE_BUG_COMMIIT_INFO = "/home/ahsan/Documents/Queens_PHD/Courses/Fall_2019/CISC_850/Assignment/Assignment/Result/output_change_metric_per_component_Full_Data_TH_0_500.csv";
 	
 	ArrayList<CommitModel> commitList = new ArrayList<CommitModel>();
 	
@@ -35,7 +35,7 @@ public class CollectMetrics {
 
 	Set<String> bugFixCommitList = new HashSet<String>();
 
-	public String REVISION_PATH = "/home/ahsan/Documents/Queens_PHD/Courses/Fall_2019/CISC_850/Assignment/Project_Sample_Commits/Project_Sample_Commits/";
+	public String REVISION_PATH = "/home/ahsan/Documents/Queens_PHD/Courses/Fall_2019/CISC_850/Assignment/Assignment/GitRevisions/";
 
 	
 	CsvWriter writer = new CsvWriter(OUTPUT_CHANGE_BUG_COMMIIT_INFO);
@@ -202,7 +202,7 @@ public class CollectMetrics {
 	}
 
 	public void extractMetrics() throws Exception {
-		for (int i = 0; i < 9; i++) {
+		for (int i = 0; i < 500; i++) {
 			CommitModel CurrentCommit = commitList.get(i);
 			String currentLocation = REVISION_PATH + CurrentCommit.getCommitId() + "_" + CurrentCommit.getCommitDate()
 					+ "/";
@@ -221,8 +221,6 @@ public class CollectMetrics {
 					String previousXML = getXML(previousLocation + filePath);
 					String currentXML = getXML(currentLocation + filePath);
 
-					//System.out.println("Previous: " + (previousLocation + filePath));
-					//System.out.println("Current: " + (currentLocation + filePath));
 					
 					Parser p = new Parser();
 					Map<String, MethodCommentModel> previosClassInfo = p.getClassInformation(previousXML);
@@ -230,6 +228,10 @@ public class CollectMetrics {
 					ChangeMetrics cMetric = calculateChangeMetrics(CurrentCommit, previosClassInfo, currentClassInfo);
 
 					/*
+					System.out.println("Previous: " + (previousLocation + filePath));
+					System.out.println("Current: " + (currentLocation + filePath));
+					
+					
 					System.out.println(CurrentCommit.getCommitId());
 					
 					System.out.println("ConsistentChange: " + cMetric.getNumberConsistentChange());
@@ -261,7 +263,7 @@ public class CollectMetrics {
 
 				} catch (Exception e) {
 					e.printStackTrace();
-					break;
+					
 				}
 			}
 			// break;			

@@ -16,6 +16,7 @@ public class ProcessUtility {
 		    while ((line = br.readLine()) != null) {
 		         sb.append(line + System.getProperty("line.separator"));
 		    }
+		    System.out.flush();
 
 		} finally {
 		    br.close();
