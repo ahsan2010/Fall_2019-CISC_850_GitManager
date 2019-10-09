@@ -1,5 +1,6 @@
 package com.sail.evaluatingevaluator.collect.metrics;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -18,13 +19,16 @@ import com.sail.evaluatingevaluator.diff.GitDiff;
 import com.sail.evaluatingevaluator.diff.GitDiffChangeDescriptor;
 import com.sail.evaluatingevaluator.process.ProcessUtility;
 import com.sail.evaluatingevaluator.xml.parser.MethodCommentModel;
+import com.sail.evaluatingevaluator.xml.parser.Parser2;
 import com.sail.model.ChangeMetrics;
 import com.sail.model.CommitFileModel;
 import com.sail.model.CommitModel;
 
 public class CollectMetrics2 {
 
-	String COMMIT_INFO_PATH = "/home/ahsan/Documents/Queens_PHD/Courses/Fall_2019/CISC_850/Assignment/Assignment/Result/revision_change_Lookup.csv";
+	// String ROOT =
+	// "home/ahsan/Documents/Queens_PHD/Courses/Fall_2019/CISC_850/Assignment/Assignment";
+	String COMMIT_INFO_PATH = "/home/ahsan/Documents/Queens_PHD/Courses/Fall_2019/CISC_850/Assignment/Assignment/Result/revision_change.csv";
 	String COMMIT_BUG_INFO = "/home/ahsan/Documents/Queens_PHD/Courses/Fall_2019/CISC_850/Assignment/Assignment/Result/commit_bug_info.csv";
 
 	String OUTPUT_CHANGE_BUG_COMMIIT_INFO = "/home/ahsan/Documents/Queens_PHD/Courses/Fall_2019/CISC_850/Assignment/Assignment/Result/output_change_metric_per_component_Full_New_Approach.csv";
@@ -86,10 +90,10 @@ public class CollectMetrics2 {
 			String commitFileName = reader.get("Changed_File");
 			String commitChangeType = reader.get("Change_Type");
 
+			if (!commitChangeType.equals("CHANGED")) {
+				continue;
+			}
 			String subSystem = commitFileName.substring(0, commitFileName.lastIndexOf("/"));
-
-			String lookUpCommit = reader.get("Lookup_Commit");
-			String lookUpCommitDate = reader.get("Lookup_Commit_Date");
 
 			if (!commitId.equals(previous)) {
 				if (previous.trim().length() <= 0) {
@@ -107,8 +111,6 @@ public class CollectMetrics2 {
 			fm.setChangeType(commitChangeType);
 			fm.setFileName(commitFileName);
 			fm.setSubSystem(subSystem);
-			fm.setLookupCommit(lookUpCommit);
-			fm.setLookupCommitDate(lookUpCommitDate);
 			cm.getChangedFileList().add(fm);
 			previous = commitId;
 		}
@@ -134,9 +136,9 @@ public class CollectMetrics2 {
 		Process process = pb.start();
 		xmlString = ProcessUtility.output(process.getInputStream());
 		int errCode = process.waitFor();
-		
+
 		ProcessUtility.output(process.getErrorStream());
-		
+
 		return xmlString;
 	}
 
@@ -222,8 +224,8 @@ public class CollectMetrics2 {
 		return false;
 	}
 
-	public ChangeMetrics calculateChangeMetricsII(ArrayList<MethodCommentModel> mmList, Set<Integer> chagedArrayList)
-			throws Exception {
+	public ChangeMetrics calculateChangeMetricsII(String commitId, ArrayList<MethodCommentModel> mmList,
+			Set<Integer> chagedArrayList) throws Exception {
 
 		ChangeMetrics cMetric = new ChangeMetrics();
 
@@ -231,6 +233,7 @@ public class CollectMetrics2 {
 			// Comment Check
 			Set<Integer> commentLineSet = new HashSet<Integer>();
 			Set<Integer> methodLineSet = new HashSet<Integer>();
+
 			if (m.getCommentString().length() > 0) {
 				String comWords[] = m.getCommentString().split("_");
 				for (String comWord : comWords) {
@@ -271,7 +274,10 @@ public class CollectMetrics2 {
 			} else if (commentChange || functionChange) {
 				cMetric.numberInConsistentChange++;
 			}
-
+		}
+		if (bugFixCommitList.contains(commitId)) {
+			cMetric.numberConsistentBugFix = cMetric.getNumberConsistentChange();
+			cMetric.numberInConsistentBugFix = cMetric.getNumberInConsistentChange();
 		}
 		return cMetric;
 	}
@@ -291,6 +297,7 @@ public class CollectMetrics2 {
 			 */
 
 			ProcessBuilder pbCheckout = new ProcessBuilder("git", "checkout", CurrentCommit.getCommitId());
+			pbCheckout.directory(new File(REPOSITORY));
 			Process processCheckout = pbCheckout.start();
 			int errCodeCheckout = processCheckout.waitFor();
 			Map<String, String> diffFiles = new HashMap<String, String>();
@@ -316,13 +323,15 @@ public class CollectMetrics2 {
 					GitDiffChangeDescriptor gitDiffChangeDescriptor = new GitDiffChangeDescriptor(output);
 					Set<Integer> changedLineList = gitDiffChangeDescriptor.getAddedLines();
 
-					//System.out.println("Changed lines " + changedLineList.toString());
+					// System.out.println("Changed lines " +
+					// changedLineList.toString());
 
-					//System.out.println(CurrentCommit.getCommitId() + " " + (REPOSITORY + filePath));
+					// System.out.println(CurrentCommit.getCommitId() + " " +
+					// (REPOSITORY + filePath));
 
 					String currentXML = getXML(CurrentCommit.getCommitId(), REPOSITORY + filePath);
 
-					//System.out.println("XML " + currentXML);
+					// System.out.println("XML " + currentXML);
 
 					/*
 					 * Parser2 p = new Parser2(); ArrayList<MethodCommentModel>
@@ -397,10 +406,11 @@ public class CollectMetrics2 {
 				}
 			}
 			System.out.println("Finish Commit " + (i + 1));
-			//break;
+			// break;
 		}
 
 		ProcessBuilder pbCheckoutMaster = new ProcessBuilder("git", "checkout", "-");
+		pbCheckoutMaster.directory(new File(REPOSITORY));
 		Process processCheckoutMaster = pbCheckoutMaster.start();
 		int errCodeCheckoutMaster = processCheckoutMaster.waitFor();
 		System.out.println("Finish Commit Checking Out	");
@@ -414,38 +424,101 @@ public class CollectMetrics2 {
 	public void extractMetricsII() throws Exception {
 		long start = System.currentTimeMillis();
 		GitDiff gitDiff = new GitDiff();
-		
-		for (int i = commitList.size() - 1; i > commitList.size() - 20; i--) {
-			
-			CommitModel previousCommit = commitList.get(i - 1);
-			CommitModel CurrentCommit = commitList.get(i);
+		Parser2 p = new Parser2();
+		for (int i =  commitList.size() - 1; i > 0; i--) {
 
-			ProcessBuilder pbCheckout = new ProcessBuilder("git", "checkout", CurrentCommit.getCommitId());
-			Process processCheckout = pbCheckout.start();
-			int errCodeCheckout = processCheckout.waitFor();
+			try {
 
-			Map<String, String> diffFilesList = new HashMap<String, String>();
-			List<String> srcmlCommands = new ArrayList<String>();
-			srcmlCommands.add("srcml");
-			srcmlCommands.add("--position");
+				CommitModel previousCommit = commitList.get(i - 1);
+				CommitModel currentCommit = commitList.get(i);
 
-			for (CommitFileModel cm : CurrentCommit.getChangedFileList()) {
-				String fileLocation = REPOSITORY + cm.getFileName();
-				srcmlCommands.add(fileLocation);
-				String output = gitDiff.diffMyVersion(previousCommit.getCommitId(), CurrentCommit.getCommitId(),
-						cm.getFileName(), REPOSITORY);
+				ProcessBuilder pbCheckout = new ProcessBuilder("git", "checkout", currentCommit.getCommitId());
+				pbCheckout.directory(new File(REPOSITORY));
+				Process processCheckout = pbCheckout.start();
+				String ouputCheckout = ProcessUtility.output(processCheckout.getErrorStream());
+				
+				
+				ProcessBuilder pbCheckoutStatus = new ProcessBuilder("git", "status");
+				Process processCheckoutStatus = pbCheckoutStatus.start();
+				String ouputCheckoutStatus = ProcessUtility.output(processCheckoutStatus.getInputStream());
+				
+				
+				int errCodeCheckout = processCheckout.waitFor();
+				
+				//System.out.println("CHECKOUT OUTPUT " + ouputCheckout);
+				//System.out.println("CHECKOUT STATUS " + ouputCheckoutStatus);
+				
 
-				diffFilesList.put(cm.getFileName(), output);
+				Map<String, Set<Integer>> diffFilesList = new HashMap<String, Set<Integer>>();
+				List<String> srcmlCommands = new ArrayList<String>();
+				srcmlCommands.add("srcml");
+				srcmlCommands.add("--position");
+
+				for (CommitFileModel cm : currentCommit.getChangedFileList()) {
+					String fileLocation = REPOSITORY + cm.getFileName();
+
+					srcmlCommands.add(fileLocation);
+					String output = gitDiff.diffMyVersion(previousCommit.getCommitId(), currentCommit.getCommitId(),
+							cm.getFileName(), REPOSITORY);
+					//System.out.println(output);
+					GitDiffChangeDescriptor gitDiffChangeDescriptor = new GitDiffChangeDescriptor(output);
+					Set<Integer> changedLineList = gitDiffChangeDescriptor.getAddedLines();
+					//changedLineList.addAll(gitDiffChangeDescriptor.getDeletedLines()); 
+					//System.out.println(cm.getFileName() + " " +changedLineList + " " + previousCommit.getCommitId()) ;
+					
+					diffFilesList.put(cm.getFileName(), changedLineList);
+					//break;
+				}
+				String currentXML = getXML(currentCommit.getCommitId(), srcmlCommands);
+				Map<String, ArrayList<MethodCommentModel>> methodListClass = p.getClassInformation(currentXML);
+				//System.out.println(currentCommit.getCommitId());
+                //System.out.println(currentXML);
+				for (String fileName : diffFilesList.keySet()) {
+					try{
+						//System.out.println("F " + diffFilesList.get(fileName));
+						String methodListKey = (REPOSITORY + fileName).substring(1);
+						ChangeMetrics cMetric = calculateChangeMetricsII(currentCommit.getCommitId(),
+								methodListClass.get(methodListKey), diffFilesList.get(fileName));
+
+						writer.write(currentCommit.getCommitId());
+						writer.write(currentCommit.getCommitDate());
+						writer.write(fileName);
+						writer.write(Integer.toString(cMetric.getNumberConsistentChange()));
+						writer.write(Integer.toString(cMetric.getNumberInConsistentChange()));
+						writer.write(Integer.toString(cMetric.getNumberConsistentBugFix()));
+						writer.write(Integer.toString(cMetric.getNumberInConsistentBugFix()));
+						writer.endRecord();
+
+						/*
+						 * System.out.println(currentCommit.getCommitId());
+						 * 
+						 * System.out.println("ConsistentChange: " +
+						 * cMetric.getNumberConsistentChange());
+						 * System.out.println("InConsistentChange: " +
+						 * cMetric.getNumberInConsistentChange());
+						 * System.out.println("ConsistentBugFix: " +
+						 * cMetric.getNumberConsistentBugFix());
+						 * System.out.println("InConsistentBugFix: " +
+						 * cMetric.getNumberInConsistentBugFix());
+						 * 
+						 * System.out.println("------------------");
+						 */
+					}catch(Exception e){
+						e.printStackTrace();
+						//System.exit(0);
+					}
+
+				}
+				System.out.println("Finish Commit " + (i + 1));
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
-			String currentXML = getXML(CurrentCommit.getCommitId(), srcmlCommands);
 
-			//System.out.println(currentXML);
-			System.out.println("Finish Commit " + (i + 1));
-			
-			//break;
+			// break;
 		}
 
 		ProcessBuilder pbCheckoutMaster = new ProcessBuilder("git", "checkout", "-");
+		pbCheckoutMaster.directory(new File(REPOSITORY));
 		Process processCheckoutMaster = pbCheckoutMaster.start();
 		int errCodeCheckoutMaster = processCheckoutMaster.waitFor();
 		System.out.println("Finish Commit Checking Out	");

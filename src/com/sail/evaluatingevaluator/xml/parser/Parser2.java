@@ -70,6 +70,7 @@ public class Parser2 {
 		
 		for(String fileName : methodListClass.keySet()){
 			for(MethodCommentModel mm : methodListClass.get(fileName)){
+				System.out.println(fileName);
 				System.out.println("Comment: " + mm.getCommentString());
 				System.out.println("Function: " + mm.getFucntionString());
 				System.out.println("------------------------------");

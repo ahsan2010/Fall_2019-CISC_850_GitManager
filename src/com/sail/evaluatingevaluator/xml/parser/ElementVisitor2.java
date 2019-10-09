@@ -21,14 +21,14 @@ public class ElementVisitor2 extends DefaultHandler {
 	
 	Map<String,ArrayList<MethodCommentModel>> methodModelPerClassList = new HashMap<String,ArrayList<MethodCommentModel>>(); 
 	String fileName = "";
-	ArrayList<MethodCommentModel> methodList;
+	ArrayList<MethodCommentModel> methodList = new ArrayList<MethodCommentModel>();
 	
 	public ElementVisitor2(XMLReader xmlReader, Map<String,ArrayList<MethodCommentModel>> methodModelPerClassList) throws Exception {
 		this.xmlReader = xmlReader;
 		this.methodModelPerClassList = methodModelPerClassList;
 	}
 	
-	MethodCommentModel mm = null;
+	//MethodCommentModel mm = new Method;
 	
 	String lineStartComment = "";
 	String lineEndComment 	= "";
@@ -115,11 +115,12 @@ public class ElementVisitor2 extends DefaultHandler {
 		
 		if (qName.equals("unit")) {
 			
+			//System.out.println("MethodList: " + methodList.size());
 			methodModelPerClassList.put(fileName, methodList);
 			methodList = new ArrayList<MethodCommentModel>();
 			
 			newClassFileStart = false;
-			System.out.println("Finish Class");
+			//System.out.println("Finish Class");
 		}	
 		
 		if(qName.equals("comment")){
@@ -136,7 +137,7 @@ public class ElementVisitor2 extends DefaultHandler {
 			mm.setCommentString(commentLineString);
 			mm.setFucntionString(functionLineString);
 			methodList.add(mm);
-			System.out.println("Fun: " + functionLineString);
+			//System.out.println("Fun: " + functionLineString);
 			commentLineString = "";
 			functionLineString = "";
 		}
